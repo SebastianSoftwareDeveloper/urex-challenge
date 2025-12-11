@@ -189,12 +189,20 @@ docker-compose exec backend composer install
 ```
 
 ### Ejecutar tests
-
-```bash
+ 
+ ```bash
+# Ejecutar todos los tests (Feature + Unit)
 docker-compose exec backend php artisan test
-```
 
-## 📚 Tecnologías Utilizadas
+# Ejecutar un test específico
+docker-compose exec backend php artisan test tests/Feature/OrderTest.php
+
+# Generar reporte de cobertura (Coverage)
+# Nota: Requiere reconstruir la imagen si acabas de activar PCOV
+docker-compose exec backend php artisan test --coverage
+ ```
+ 
+ ## 📚 Tecnologías Utilizadas
 
 - **Backend**: PHP 8.4, Laravel 12, MySQL 8.0
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
