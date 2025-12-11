@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # Backend - Laravel API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: urex-backend
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./backend:/var/www
+    networks:
+      - urex-network
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=urex_db
+      - DB_USERNAME=urex_user
+      - DB_PASSWORD=urex_password
+
+  # Nginx for Laravel
+  backend-nginx:
+    image: nginx:alpine
+    container_name: urex-backend-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./backend:/var/www
+      - ./backend/docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - urex-network
+    depends_on:
+      - backend
+
+  # Frontend - HTML/CSS/JS
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: urex-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:8080"
+    volumes:
+      - ./frontend/public:/var/www/html
+    networks:
+      - urex-network
+
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: urex-db
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: urex_db
+      MYSQL_USER: urex_user
+      MYSQL_PASSWORD: urex_password
+      MYSQL_ROOT_PASSWORD: root_password
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - urex-network
+
+networks:
+  urex-network:
+    driver: bridge
+
+volumes:
+  db-data:
+    driver: local
