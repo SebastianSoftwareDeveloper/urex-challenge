@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
 use Illuminate\Http\Request;
 use \App\Models\Order;
 use \Illuminate\Support\Facades\DB;
 use \Exception;
+use App\Http\Controllers\Controller;
 
-use App\Http\Requests\StoreOrderRequest;
+use App\Http\Requests\Api\V1\Order\StoreOrderRequest;
 
 class OrderController extends Controller
 {

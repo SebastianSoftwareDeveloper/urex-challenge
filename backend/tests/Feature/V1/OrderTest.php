@@ -10,6 +10,8 @@ class OrderTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $baseUrl = '/api/v1/orders';
+
     public function test_can_list_orders(): void
     {
         // Crear datos de prueba
@@ -20,7 +22,7 @@ class OrderTest extends TestCase
             'total' => 100,
         ]);
 
-        $response = $this->getJson('/api/orders');
+        $response = $this->getJson($this->baseUrl);
 
         $response->assertStatus(200)
             ->assertJsonStructure([
@@ -42,7 +44,7 @@ class OrderTest extends TestCase
             ]
         ];
 
-        $response = $this->postJson('/api/orders', $payload);
+        $response = $this->postJson($this->baseUrl, $payload);
 
         $response->assertStatus(201)
             ->assertJson([
@@ -56,7 +58,7 @@ class OrderTest extends TestCase
 
     public function test_cannot_create_order_with_invalid_data(): void
     {
-        $response = $this->postJson('/api/orders', []);
+        $response = $this->postJson($this->baseUrl, []);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['customer_name', 'items']);
@@ -81,7 +83,7 @@ class OrderTest extends TestCase
             ]
         ];
 
-        $response = $this->postJson('/api/orders', $payload);
+        $response = $this->postJson($this->baseUrl, $payload);
 
         $response->assertStatus(500)
             ->assertJson(['error' => 'Error creating order: Database failure simulation']);
@@ -96,7 +98,7 @@ class OrderTest extends TestCase
             'total' => 50,
         ]);
 
-        $response = $this->getJson("/api/orders/{$order->id}");
+        $response = $this->getJson("{$this->baseUrl}/{$order->id}");
 
         $response->assertStatus(200)
             ->assertJson(['id' => $order->id]);
@@ -104,20 +106,20 @@ class OrderTest extends TestCase
 
     public function test_cannot_show_non_existent_order(): void
     {
-        $response = $this->getJson('/api/orders/9999');
+        $response = $this->getJson("{$this->baseUrl}/9999");
 
         $response->assertStatus(404);
     }
 
     public function test_update_returns_not_implemented(): void
     {
-        $response = $this->putJson('/api/orders/1', []);
+        $response = $this->putJson("{$this->baseUrl}/1", []);
         $response->assertStatus(501);
     }
 
     public function test_destroy_returns_not_implemented(): void
     {
-        $response = $this->deleteJson('/api/orders/1');
+        $response = $this->deleteJson("{$this->baseUrl}/1");
         $response->assertStatus(501);
     }
 }
