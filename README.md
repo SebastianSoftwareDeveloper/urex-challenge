@@ -2,30 +2,32 @@
 
 Sistema de gestión de pedidos para integración con plataformas e-commerce.
 
-## 📋 Descripción del Proyecto
+## Descripción del Proyecto
 
 Este proyecto es una solución al challenge técnico para desarrollador PHP Full Stack. Consiste en un servicio que permite recibir pedidos desde una tienda e-commerce simulada, almacenarlos en una base de datos y exponer endpoints para consultarlos.
 
-## 🏗️ Arquitectura
+## Arquitectura
 
 El proyecto está dividido en dos componentes principales:
 
 - **Backend**: API REST desarrollada en Laravel (PHP)
 - **Frontend**: Interfaz web desarrollada en HTML, CSS y JavaScript
+- Swagger UI: Interfaz interactiva para documentar y probar la API (OpenAPI 3.0)
 
-## 🚀 Requisitos Previos
+## Requisitos Previos
 
 - Docker y Docker Compose instalados
 - Git
-- Puertos disponibles: 3000 (frontend), 8000 (backend), 3306 (MySQL)
+- Puertos disponibles: 3000 (frontend), 8000 (backend), 8080 (Swagger UI), 3306 (MySQL)
 
-## 📦 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 urex-challenge/
 ├── docker-compose.yml          # Orquestación de todos los servicios
 ├── README.md                   # Este archivo
 ├── backend/                    # API Laravel
+│   ├── openapi.yaml            # Especificación OpenAPI 3.0 para Swagger
 │   ├── Dockerfile
 │   └── [Laravel files]
 └── frontend/                   # Frontend web
@@ -34,7 +36,7 @@ urex-challenge/
     └── public/
 ```
 
-## 🔧 Instalación y Configuración
+## Instalación y Configuración
 
 
 
@@ -100,15 +102,16 @@ docker-compose exec backend php artisan migrate
 docker-compose exec backend chown -R appuser:appuser /var/www/storage /var/www/bootstrap/cache
 ```
 
-## 🌐 Acceso a los Servicios
+## Acceso a los Servicios
 
 Una vez que los contenedores estén corriendo:
 
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:8000
+- **Documentación (Swagger UI)**: http://localhost:8080 (Interfaz interactiva para probar los endpoints de la API)
 - **Base de datos MySQL**: Host: `localhost`, Puerto: `3306` (Acceso vía cliente SQL)
 
-## 🧪 Verificar la Instalación
+## Verificar la Instalación
 
 ### Frontend
 
@@ -124,14 +127,21 @@ Verificar que la API esté respondiendo:
 curl http://localhost:8000/api/health
 ```
 
-## 🐳 Comandos Docker Útiles
+### Documentación de la API (Swagger UI)
+La documentación de la API se genera automáticamente a partir del archivo backend/openapi.yaml y se sirve a través de Swagger UI.
+
+1. Abre http://localhost:8080 en tu navegador.
+2. El host de la API está configurado para llamar a http://localhost:8000/api/v1 para la ejecución de pruebas.
+
+## Comandos Docker Útiles
 
 ```bash
 # Ver logs de todos los servicios
 docker-compose logs -f
 
-# Ver logs de un servicio específico
+# Ver logs de un servicio específico (ej. Backend o Swagger)
 docker-compose logs -f backend
+docker-compose logs -f swagger
 
 # Detener los servicios
 docker-compose down
@@ -149,7 +159,7 @@ docker-compose exec backend php artisan <comando>
 docker-compose exec backend bash
 ```
 
-## 📝 Endpoints de la API
+## Endpoints de la API
 
 ### POST /api/orders
 Crear un nuevo pedido
@@ -165,8 +175,7 @@ Crear un nuevo pedido
       "quantity": 2,
       "price": 100.50
     }
-  ],
-  "total": 201.00
+  ]
 }
 ```
 
@@ -176,11 +185,11 @@ Listar todos los pedidos
 ### GET /api/orders/{id}
 Obtener un pedido específico
 
-## 🔒 Seguridad
+## Seguridad
 
 Este proyecto está configurado para funcionar con **Docker rootless** por seguridad. Los contenedores no se ejecutan como root.
 
-## 🛠️ Desarrollo
+## Desarrollo
 
 ### Instalar dependencias de Composer
 
@@ -202,9 +211,10 @@ docker-compose exec backend php artisan test tests/Feature/OrderTest.php
 docker-compose exec backend php artisan test --coverage
  ```
  
- ## 📚 Tecnologías Utilizadas
+ ## Tecnologías Utilizadas
 
 - **Backend**: PHP 8.4, Laravel 12, MySQL 8.0
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
 - **Servidor Web**: Nginx
 - **Containerización**: Docker, Docker Compose
+- **Documentación**: Swagger UI / OpenAPI 3.0
