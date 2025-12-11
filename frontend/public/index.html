@@ -4,28 +4,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Envios - Frontend</title>
+    <title>Gestión de Pedidos - Frontend</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div class="container">
         <header>
-            <h1>📦 Gestión de Envios</h1>
-            <p class="subtitle">Challenge Técnico - Frontend</p>
+            <h1>🛒 Gestión de Pedidos</h1>
+            <p class="subtitle">Challenge Técnico - Fullstack</p>
         </header>
 
-        <main>
-            <div class="card">
-                <h2>¡Frontend funcionando correctamente! ✅</h2>
-                <p>Este es el frontend básico del proyecto usando HTML, CSS y JavaScript.</p>
-                <button id="testButton" class="btn">Probar Conexión</button>
-                <div id="status" class="status"></div>
+        <main id="app-content">
+            <div id="controls" class="card controls">
+                <button id="showOrdersButton" class="btn btn-primary" style="display: none;">← Volver al
+                    Listado</button>
+                <button id="showFormButton" class="btn">➕ Nuevo Pedido</button>
+            </div>
+
+            <div id="content-container">
+                <div id="orders-list-view" class="view">
+                    <div class="card">
+                        <h2>Listado de Pedidos</h2>
+                        <div id="orders-table-container">
+                            <p class="status info">Cargando pedidos...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="order-detail-view" class="view" style="display: none;">
+                    <div class="card">
+                        <h2>Detalle del Pedido</h2>
+                        <div id="order-detail-content"></div>
+                    </div>
+                </div>
+
+                <div id="create-order-view" class="view" style="display: none;">
+                    <div class="card">
+                        <h2>Crear Nuevo Pedido</h2>
+                        <form id="create-order-form">
+                            <p class="status info">Generando formulario...</p>
+                        </form>
+                        <div id="form-status" class="status"></div>
+                    </div>
+                </div>
             </div>
         </main>
 
         <footer>
-            <p>Proyecto configurado con Docker 🐳</p>
+            <p>Gestión de Pedidos - Challenge Técnico Fullstack</p>
         </footer>
     </div>
 
