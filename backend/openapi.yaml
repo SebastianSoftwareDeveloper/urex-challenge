@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
-title: API de Pedidos V1
-version: 1.0.0
-description: API
+  title: API de Pedidos V1
+  version: 1.0.0
+  description: API con autenticación mediante Bearer Tokens (Sanctum).
 
 servers:
   - url: http://localhost:8000/api/v1
@@ -28,8 +28,10 @@ paths:
     post:
       tags:
         - Pedidos
-      summary: Crea un nuevo pedido
+      summary: Crea un nuevo pedido (Requiere Autenticación)
       operationId: createOrder
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -43,6 +45,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Order'
+        "401":
+          description: No autorizado - El token es inválido o no se envió.
         "422":
           description: Error de validación (campos requeridos o formato incorrecto).
 
@@ -70,6 +74,13 @@ paths:
           description: Pedido no encontrado.
 
 components:
+  # --- DEFINICIÓN DEL ESQUEMA DE SEGURIDAD ---
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT  # Aunque Sanctum usa tokens opacos, se usa esta convención
+
   schemas:
     # --- SCHEMAS DE ENTRADA (Input) ---
     StoreOrderItemRequest:
