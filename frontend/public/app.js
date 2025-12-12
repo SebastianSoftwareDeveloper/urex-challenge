@@ -2,6 +2,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Configuración y Elementos DOM ---
     const API_BASE_URL = 'http://localhost:8000/api/v1';
 
+    const loginModal = document.getElementById('loginModal');
+    const loginForm = document.getElementById('loginForm');
+    const closeModal = document.getElementById('closeModal');
+
     // Controles
     const showOrdersButton = document.getElementById('showOrdersButton');
     const showFormButton = document.getElementById('showFormButton');
@@ -168,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="item-group" style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-bottom: 15px; background-color: #f9f9f9;">
                     <div class="form-group">
                         <label>Producto</label>
-                        <input type="text" name="product_name" value="Producto A" required>
+                    <input type="text" name="product_name" value="Producto A" required>
                     </div>
                     <div class="form-group" style="display: flex; gap: 20px;">
                         <div style="flex: 1;">
@@ -184,11 +188,14 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <button type="button" id="addItemButton" class="btn" style="width: 100%; margin-bottom: 20px;">+ Agregar otro producto</button>
             <button type="submit" class="btn" style="width: 100%;">Enviar Pedido</button>
-        `;
+            <div id="auth-section" style="margin-top: 15px; text-align: center;">
+                <button type="button" id="authBtn" class="btn secondary" style="width: 100%;">🔑 Iniciar Sesión</button>
+                <p id="auth-error-message" class="status error" style="display: none; margin-top: 10px;"></p>
+            </div>`;
 
-        // Adjuntar manejadores de eventos
         document.getElementById('addItemButton').addEventListener('click', addItemField);
-        createOrderForm.addEventListener('submit', handleFormSubmit);
+        createOrderForm.onsubmit = handleFormSubmit;
+        setupAuthButton(); // Configura el botón de login apenas se crea el form
     }
 
     let itemCounter = 1;
@@ -216,8 +223,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function handleFormSubmit(e) {
-        e.preventDefault();
-        showStatus(formStatusDiv, 'Enviando pedido...', 'info');
+        if (e) e.preventDefault();
+        const token = localStorage.getItem('auth_token');
+        const authError = document.getElementById('auth-error-message');
+        showStatus(formStatusDiv, 'Enviando...', 'info');
 
         const formData = new FormData(createOrderForm);
         const requestBody = {
@@ -248,46 +257,90 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         try {
+            const headers = { 'Content-Type': 'application/json', 'Accept': 'application/json' };
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+
             const response = await fetch(`${API_BASE_URL}/orders`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestBody),
+                headers: headers,
+                body: JSON.stringify(requestBody)
             });
 
-            if (response.ok) {
-                const order = await response.json();
-                showStatus(formStatusDiv, `✅ Pedido #${order.id} creado con éxito!`, 'success');
-                setTimeout(() => {
-                    fetchOrders(); // Recargar la lista
-                    navigateTo('orders-list-view');
-                }, 1500);
-            } else {
-                const errorData = await response.json();
-                showStatus(formStatusDiv, `⚠️ Error (${response.status}): ${JSON.stringify(errorData.errors || errorData.message)}`, 'error', true);
+            if (response.status === 401 || response.status === 403) {
+                authError.textContent = '⚠️ Inicia sesión para enviar pedidos.';
+                authError.classList.add('visible');
+                authError.style.display = 'block';
+                showStatus(formStatusDiv, 'Error: Se requiere autenticación', 'error');
+            } else if (response.ok) {
+                showStatus(formStatusDiv, '✅ ¡Pedido creado con éxito!', 'success');
+                setTimeout(() => { fetchOrders(); navigateTo('orders-list-view'); }, 1500);
             }
+        } catch (error) { console.error(error); }
+    }
 
-        } catch (error) {
-            showStatus(formStatusDiv, 'Error de conexión con la API (POST).', 'error');
-            console.error('POST Order Error:', error);
+    // --- Autenticación ---
+    function updateAuthUI() {
+        const authBtn = document.getElementById('authBtn');
+        const authError = document.getElementById('auth-error-message');
+        const token = localStorage.getItem('auth_token');
+        if (!authBtn) return;
+
+        if (token) {
+            authBtn.textContent = '🚪 Cerrar Sesión';
+            authBtn.style.backgroundColor = '#dc3545';
+            if (authError) {
+                authError.classList.remove('visible');
+                authError.style.display = 'none';
+            }
+        } else {
+            authBtn.textContent = '🔑 Iniciar Sesión';
+            authBtn.style.backgroundColor = '#6c757d';
         }
     }
 
+    function setupAuthButton() {
+        const authBtn = document.getElementById('authBtn');
+        if (!authBtn) return;
+        updateAuthUI();
+        authBtn.onclick = () => {
+            if (localStorage.getItem('auth_token')) {
+                localStorage.removeItem('auth_token');
+                updateAuthUI();
+                showStatus(formStatusDiv, 'Sesión cerrada', 'info');
+            } else {
+                loginModal.classList.add('visible');
+            }
+        };
+    }
+
+    loginForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        try {
+            const response = await fetch('http://localhost:8000/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                localStorage.setItem('auth_token', data.access_token);
+                loginModal.classList.remove('visible');
+                updateAuthUI();
+                handleFormSubmit(); // Intenta enviar el pedido automáticamente tras login
+            } else {
+                alert('Error: ' + data.message);
+            }
+        } catch (error) { console.error(error); }
+    };
+
+    closeModal.onclick = () => loginModal.classList.remove('visible');
 
     // --- Inicialización ---
+    showOrdersButton.onclick = () => { fetchOrders(); navigateTo('orders-list-view'); };
+    showFormButton.onclick = () => { navigateTo('create-order-view'); renderCreateOrderForm(); };
 
-    // 1. Manejadores de eventos de navegación
-    showOrdersButton.addEventListener('click', () => {
-        navigateTo('orders-list-view');
-    });
-
-    showFormButton.addEventListener('click', () => {
-        navigateTo('create-order-view');
-        renderCreateOrderForm();
-    });
-
-    // 2. Carga inicial
     fetchOrders();
     navigateTo('orders-list-view');
 });

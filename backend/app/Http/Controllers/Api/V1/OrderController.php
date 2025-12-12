@@ -74,20 +74,4 @@ class OrderController extends Controller
 
         return response()->json($order);
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        return response()->json(['message' => 'Not implemented'], 501);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        return response()->json(['message' => 'Not implemented'], 501);
-    }
 }

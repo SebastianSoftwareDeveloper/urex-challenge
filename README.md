@@ -4,15 +4,13 @@ Sistema de gestión de pedidos para integración con plataformas e-commerce.
 
 ## Descripción del Proyecto
 
-Este proyecto es una solución al challenge técnico para desarrollador PHP Full Stack. Consiste en un servicio que permite recibir pedidos desde una tienda e-commerce simulada, almacenarlos en una base de datos y exponer endpoints para consultarlos.
+Este proyecto permite recibir pedidos desde una tienda e-commerce simulada, almacenarlos y gestionarlos. Se ha implementado un sistema de autenticación por Bearer Tokens para proteger las acciones críticas (creación de pedidos) mientras se mantiene la consulta de datos pública.
 
 ## Arquitectura
 
-El proyecto está dividido en dos componentes principales:
-
-- **Backend**: API REST desarrollada en Laravel (PHP)
+- **Backend**: API REST desarrollada en Laravel 12 (PHP 8.4).
 - **Frontend**: Interfaz web desarrollada en HTML, CSS y JavaScript
-- Swagger UI: Interfaz interactiva para documentar y probar la API (OpenAPI 3.0)
+- **Swagger UI**: Interfaz interactiva para documentar y probar la API (OpenAPI 3.0)
 
 ## Requisitos Previos
 
@@ -95,8 +93,8 @@ docker-compose up -d --build
 # Generar la clave de la aplicación
 docker-compose exec backend php artisan key:generate
 
-# Ejecutar migraciones
-docker-compose exec backend php artisan migrate
+# Ejecutar migraciones y cargar datos iniciales (Usuario Admin y Pedidos)
+docker-compose exec backend php artisan migrate --seed
 
 # Dar permisos (si es necesario)
 docker-compose exec backend chown -R appuser:appuser /var/www/storage /var/www/bootstrap/cache
@@ -189,6 +187,8 @@ Obtener un pedido específico
 - Este proyecto está configurado para funcionar con **Docker rootless** por seguridad. Los contenedores no se ejecutan como root.
 - Registro de Errores Diario (Daily Logging): El backend de Laravel está configurado para utilizar el canal daily (LOG_STACK=daily), que rota automáticamente los archivos de logs críticos por día (ej. fallos de base de datos) y los almacena en storage/logs. Esto facilita la auditoría y el mantenimiento.
 - Manejo de Excepciones: Se ha implementado un bloque try...catch específico con Log::error() en el método de creación de pedidos para registrar los datos de la solicitud y la traza completa de la excepción, sin exponer información sensible del servidor al cliente API.
+- Laravel Sanctum para el manejo de tokens de acceso.
+- CORS: Configurado para permitir peticiones desde el contenedor del frontend (localhost:3000).
 
 ## Desarrollo
 

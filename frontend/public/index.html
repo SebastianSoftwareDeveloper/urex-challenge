@@ -56,6 +56,19 @@
         </footer>
     </div>
 
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <h3>Iniciar Sesión</h3>
+            <p>Debes estar autenticado para crear pedidos.</p>
+            <form id="loginForm">
+                <input type="email" id="email" placeholder="Email" required value="admin@challenge.com">
+                <input type="password" id="password" placeholder="Contraseña" required value="password">
+                <button type="submit" class="btn">Ingresar</button>
+                <button type="button" id="closeModal" class="btn secondary">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 
