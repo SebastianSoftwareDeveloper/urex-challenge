@@ -185,9 +185,10 @@ Listar todos los pedidos
 ### GET /api/orders/{id}
 Obtener un pedido específico
 
-## Seguridad
-
-Este proyecto está configurado para funcionar con **Docker rootless** por seguridad. Los contenedores no se ejecutan como root.
+## Seguridad y Auditoría
+- Este proyecto está configurado para funcionar con **Docker rootless** por seguridad. Los contenedores no se ejecutan como root.
+- Registro de Errores Diario (Daily Logging): El backend de Laravel está configurado para utilizar el canal daily (LOG_STACK=daily), que rota automáticamente los archivos de logs críticos por día (ej. fallos de base de datos) y los almacena en storage/logs. Esto facilita la auditoría y el mantenimiento.
+- Manejo de Excepciones: Se ha implementado un bloque try...catch específico con Log::error() en el método de creación de pedidos para registrar los datos de la solicitud y la traza completa de la excepción, sin exponer información sensible del servidor al cliente API.
 
 ## Desarrollo
 
