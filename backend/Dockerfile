@@ -28,6 +28,8 @@ RUN mkdir -p /home/appuser/.composer && \
 # Set working directory
 WORKDIR /var/www
 
+RUN chown appuser:appuser /var/www
+
 # Copy existing application directory permissions
 COPY --chown=appuser:appuser . /var/www
 
