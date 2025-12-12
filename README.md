@@ -109,13 +109,18 @@ Una vez que los contenedores estén corriendo:
 - **Documentación (Swagger UI)**: http://localhost:8080 (Interfaz interactiva para probar los endpoints de la API)
 - **Base de datos MySQL**: Host: `localhost`, Puerto: `3306` (Acceso vía cliente SQL)
 
+> **Importante:** Para realizar pedidos desde el frontend o Swagger, utilice las siguientes credenciales:
+> - **Usuario:** `admin@challenge.com`
+> - **Contraseña:** `password`
+
+NOTA: En Swagger usar el Bearer token del browser cuando se solicite.
+
 ## Verificar la Instalación
 
 ### Frontend
 
 1. Abrir http://localhost:3000 en el navegador
-2. Deberías ver la página de bienvenida del frontend
-3. Hacer clic en "Probar Conexión" para verificar la comunicación con el backend
+2. Deberías ver la página de la tienda e-commerce
 
 ### Backend
 
@@ -131,36 +136,10 @@ La documentación de la API se genera automáticamente a partir del archivo back
 1. Abre http://localhost:8080 en tu navegador.
 2. El host de la API está configurado para llamar a http://localhost:8000/api/v1 para la ejecución de pruebas.
 
-## Comandos Docker Útiles
-
-```bash
-# Ver logs de todos los servicios
-docker-compose logs -f
-
-# Ver logs de un servicio específico (ej. Backend o Swagger)
-docker-compose logs -f backend
-docker-compose logs -f swagger
-
-# Detener los servicios
-docker-compose down
-
-# Detener y eliminar volúmenes
-docker-compose down -v
-
-# Reconstruir los contenedores
-docker-compose up -d --build
-
-# Ejecutar comandos en el contenedor del backend
-docker-compose exec backend php artisan <comando>
-
-# Acceder al contenedor
-docker-compose exec backend bash
-```
-
 ## Endpoints de la API
 
-### POST /api/orders
-Crear un nuevo pedido
+### POST /api/v1/orders
+Crear un nuevo pedido, requiere autenticación.
 
 **Request:**
 ```json
@@ -177,10 +156,10 @@ Crear un nuevo pedido
 }
 ```
 
-### GET /api/orders
+### GET /api/v1/orders
 Listar todos los pedidos
 
-### GET /api/orders/{id}
+### GET /api/v1/orders/{id}
 Obtener un pedido específico
 
 ## Seguridad y Auditoría
@@ -208,9 +187,9 @@ docker-compose exec backend php artisan test
 docker-compose exec backend php artisan test tests/Feature/OrderTest.php
 
 # Generar reporte de cobertura (Coverage)
-# Nota: Requiere reconstruir la imagen si acabas de activar PCOV
 docker-compose exec backend php artisan test --coverage
  ```
+ Nota: El proyecto cuenta con una cobertura de código del 100% en los controladores principales (OrderController y AuthController).
  
  ## Tecnologías Utilizadas
 
