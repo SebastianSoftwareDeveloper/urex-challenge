@@ -9,6 +9,7 @@ use \Exception;
 use App\Http\Controllers\Controller;
 
 use App\Http\Requests\Api\V1\Order\StoreOrderRequest;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -50,7 +51,13 @@ class OrderController extends Controller
                 return response()->json($order->load('items'), 201);
             });
         } catch (Exception $e) {
-            return response()->json(['error' => 'Error creating order: ' . $e->getMessage()], 500);
+
+            Log::error("Failed to create order: {$e->getMessage()}", [
+                'request_data' => $validated,
+                'exception' => $e
+            ]);
+
+            return response()->json(['error' => 'An unexpected error occurred while creating the order.'], 500);
         }
     }
 

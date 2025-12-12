@@ -86,7 +86,7 @@ class OrderTest extends TestCase
         $response = $this->postJson($this->baseUrl, $payload);
 
         $response->assertStatus(500)
-            ->assertJson(['error' => 'Error creating order: Database failure simulation']);
+            ->assertJson(['error' => 'An unexpected error occurred while creating the order.']);
     }
 
     public function test_can_show_order(): void
