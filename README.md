@@ -49,14 +49,14 @@ cd urex-challenge
 
 Antes de levantar los contenedores, necesitamos instalar Laravel:
 
+Linux / macOS / PowerShell:
 ```bash
-# Opción A: Si tenes Composer instalado localmente
-cd backend
-composer create-project laravel/laravel .
-cd ..
-
-# Opción B: Usando Docker (recomendado)
 docker run --rm -v ${PWD}/backend:/app -w /app composer:latest create-project laravel/laravel .
+```
+
+Windows:
+```bash
+docker run --rm -v ${PWD}/backend:/app -w //app composer:latest create-project laravel/laravel .
 ```
 
 ### 3. Configurar variables de entorno
