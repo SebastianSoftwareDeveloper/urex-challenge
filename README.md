@@ -6,6 +6,12 @@ Sistema de gestión de pedidos para integración con plataformas e-commerce.
 
 Este proyecto permite recibir pedidos desde una tienda e-commerce simulada, almacenarlos y gestionarlos. Se ha implementado un sistema de autenticación por Bearer Tokens para proteger las acciones críticas (creación de pedidos) mientras se mantiene la consulta de datos pública.
 
+## Vista Previa del Proyecto
+
+| Main Page | Details Page | Create Order Page |
+| :---: | :---: | :---: |
+| ![Tienda](screenshots/tienda1.png) | ![Login](screenshots/tienda2.png) | ![Login](screenshots/tienda3.png) |
+
 ## Arquitectura
 
 - **Backend**: API REST desarrollada en Laravel 12 (PHP 8.4).
@@ -24,6 +30,7 @@ Este proyecto permite recibir pedidos desde una tienda e-commerce simulada, alma
 urex-challenge/
 ├── docker-compose.yml          # Orquestación de todos los servicios
 ├── README.md                   # Este archivo
+├── screenshots/                # Capturas de pantalla
 ├── backend/                    # API Laravel
 │   ├── openapi.yaml            # Especificación OpenAPI 3.0 para Swagger
 │   ├── Dockerfile
